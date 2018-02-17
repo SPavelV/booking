@@ -32,40 +32,40 @@ class AdsObject {
       ++max;
       return Math.floor(Math.random() * (max - min) + min);
     };
-    const AUTHOR_AVATAR_SRC = 'img/avatars/user0' + getRandomNum(MAX_QTY_OBJECT);
-    const OFFER_TITLE = TITLE_OBJECTS[getRandomNum(TITLE_OBJECTS.length - 1)];
-    const OFFER_LOCATION_X = getRandomArbitary(LOCATION_MIN_X, LOCATION_MAX_X);
-    const OFFER_LOCATION_Y = getRandomArbitary(LOCATION_MIN_Y, LOCATION_MAX_Y);
-    const OFFER_LOCATION_COORDINATES = "{{location." + OFFER_LOCATION_X + "}}, {{location." +
-      OFFER_LOCATION_Y + "}}";
-    const OFFER_PRICE = getRandomArbitary(MIN_PRICE, MAX_PRICE);
-    const OFFER_TYPE = TYPE_OBJECTS[getRandomNum(TYPE_OBJECTS.length - 1)];
-    const OFFER_ROOMS = getRandomNum(MAX_ROOMS);
-    const OFFER_GUESTS = getRandomNum(MAX_GUESTS);
-    const OFFER_CHECKIN = CHECKIN_CHECKOUT_TIMES[getRandomNum(CHECKIN_CHECKOUT_TIMES.length - 1)];
-    const OFFER_CHECKOUT = CHECKIN_CHECKOUT_TIMES[getRandomNum(CHECKIN_CHECKOUT_TIMES.length - 1)];
-    const OFFER_FEATURERS = FEATURES[getRandomNum(FEATURES.length - 1)];
-    const OFFER_DESCRIPTION = '';
-    const OFFER_PHOTOS = [];
+    let authorAvatarSrc = 'img/avatars/user0' + getRandomNum(MAX_QTY_OBJECT);
+    let offerTitle = TITLE_OBJECTS[getRandomNum(TITLE_OBJECTS.length - 1)];
+    let offerLocationX = getRandomArbitary(LOCATION_MIN_X, LOCATION_MAX_X);
+    let offerLocationY = getRandomArbitary(LOCATION_MIN_Y, LOCATION_MAX_Y);
+    let offerLocationCoordinates = "{{location." + offerLocationX + "}}, {{location." +
+      offerLocationY + "}}";
+    let offerPrice = getRandomArbitary(MIN_PRICE, MAX_PRICE);
+    let offerType = TYPE_OBJECTS[getRandomNum(TYPE_OBJECTS.length - 1)];
+    let offerRooms = getRandomNum(MAX_ROOMS);
+    let offerGuests = getRandomNum(MAX_GUESTS);
+    let offerCheckin = CHECKIN_CHECKOUT_TIMES[getRandomNum(CHECKIN_CHECKOUT_TIMES.length - 1)];
+    let offerCheckout = CHECKIN_CHECKOUT_TIMES[getRandomNum(CHECKIN_CHECKOUT_TIMES.length - 1)];
+    let offerFeatures = FEATURES[getRandomNum(FEATURES.length - 1)];
+    let offerDescription = '';
+    let offerPhotos = [];
 
-    this.author = {"avatar": AUTHOR_AVATAR_SRC};
+    this.author = {"avatar": authorAvatarSrc};
     this.offer = {
-      "title": OFFER_TITLE,
-      "address": OFFER_LOCATION_COORDINATES,
-      "price": OFFER_PRICE,
-      "type": OFFER_TYPE,
-      "rooms": OFFER_ROOMS,
-      "guests": OFFER_GUESTS,
-      "checkin": OFFER_CHECKIN,
-      "checkout": OFFER_CHECKOUT,
-      "featurers": OFFER_FEATURERS,
-      "description": OFFER_DESCRIPTION,
-      "photos": OFFER_PHOTOS
+      "title": offerTitle,
+      "address": offerLocationCoordinates,
+      "price": offerPrice,
+      "type": offerType,
+      "rooms": offerRooms,
+      "guests": offerGuests,
+      "checkin": offerCheckin,
+      "checkout": offerCheckout,
+      "featurers": offerFeatures,
+      "description": offerDescription,
+      "photos": offerPhotos
     };
 
     this.location = {
-      "x": OFFER_LOCATION_X,
-      "y": OFFER_LOCATION_Y
+      "x": offerLocationX,
+      "y": offerLocationY
     }
   }
 }
