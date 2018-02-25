@@ -77,7 +77,7 @@ class Map {
 
     document.addEventListener('DOMContentLoaded', () => {
       const pinMap = document.querySelector('.tokyo__pin-map');
-      const offerDialog= document.querySelector('.dialog');
+      const offerDialog = document.querySelector('.dialog');
       const offerDialogTitle = offerDialog.querySelector('.dialog__title');
       const offerDialogAvatar = offerDialogTitle.querySelector('img');
       const dialogPanel = offerDialog.querySelector('.dialog__panel');
@@ -128,7 +128,7 @@ class Map {
 
       const getFeaturesObjectHtml = object => {
         let featuresTemplate = '';
-        for(let i = 0; i < object.offer.features.length; i++) {
+        for (let i = 0; i < object.offer.features.length; i++) {
           featuresTemplate += `<span class="feature__image feature__image--${object.offer.features[i]}"></span>`;
         }
         return featuresTemplate;
@@ -152,14 +152,58 @@ class Map {
         dialogParent.replaceChild(newDialogPanel, dialogPanel);
       };
 
+      const createHandlersEvents = (adsData) => {
+        const pin = document.querySelectorAll('.pin:not(.pin__main)');
+        const btnCloseDialog = document.querySelector('.dialog__close');
+        const dialog = document.querySelector('#offer-dialog');
+
+        let onBtnCloseDialogClick = (e)=> {
+          for (let i = 0; i < pin.length; i++) {
+            pin[i].classList.remove('pin--active');
+          }
+
+          dialog.classList.add('hidden');
+        };
+
+        let openDialogPanel = () => {
+          dialog.classList.remove('hidden');
+        };
+
+        const onPinMapClick = (pin, evt, index) => {
+          let siblingsPin = Array.prototype.filter.call(pin[index].parentNode.children, (child) => {
+            return child !== pin[index];
+          });
+
+          for (let i = 0; i < siblingsPin.length; i++) {
+            siblingsPin[i].classList.remove('pin--active');
+          }
+
+          evt.currentTarget.classList.add('pin--active');
+          createDialogPanel(dialog, dialogPanel, renderDialogPanel(templateDialogPanel.content, adsData[index]));
+
+          openDialogPanel();
+
+          btnCloseDialog.addEventListener('click', onBtnCloseDialogClick);
+
+        };
+
+        for (let i = 0; i < pin.length; i++) {
+          pin[i].addEventListener('click', (e) => {
+            onPinMapClick(pin, e, i);
+          })
+        }
+      };
+
       const mapInit = () => {
         const adsData = mockData(OBJECTS_QTY);
 
         createLabelsInMap(adsData, pinMap);
         createDialogPanel(offerDialog, dialogPanel, renderDialogPanel(templateDialogPanel.content, adsData[0]));
+        createHandlersEvents(adsData);
       };
 
       mapInit();
+
     })
   }
 }
