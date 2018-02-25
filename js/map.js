@@ -1,16 +1,5 @@
 "use strict";
 
-const OBJECTS_QTY = 8;
-const PIN_MAP = document.querySelector('.tokyo__pin-map');
-const OFFER_DIALOG = document.querySelector('.dialog');
-const OFFER_DIALOG_TITLE = OFFER_DIALOG.querySelector('.dialog__title');
-const OFFER_DIALOG_AVATAR = OFFER_DIALOG_TITLE.querySelector('img');
-const DIALOG_PANEL = OFFER_DIALOG.querySelector('.dialog__panel');
-const TEMPLATE_DIALOG_PANEL = document.querySelector('#lodge-template');
-const TEMPLATE_DIALOG_PANEL_CONTENT = TEMPLATE_DIALOG_PANEL.content;
-let adsArray = [];
-let fragment = document.createDocumentFragment();
-
 class AdsObject {
 
   constructor() {
@@ -29,141 +18,150 @@ class AdsObject {
       "Уютное бунгало далеко от моря", "Неуютное бунгало по колено в воде"];
     const TYPE_OBJECTS = ['flat', 'house', 'bungalo'];
     const FEATURES = ["wifi", "dishwasher", "parking", "washer", "elevator", "conditioner"];
-    const getRandom = () => {
-      return Math.random();
-    };
-    const getRandomNum = num => {
-      return Math.floor(getRandom() * num);
-    };
 
-    const getRandomArbitary = function (min, max) {
-      ++max;
-      return Math.floor(Math.random() * (max - min) + min);
+    const getRandomInteger = (min, max) => {
+      return Math.floor(min + Math.random() * (max - min + 1));
     };
 
     const getRandomArray = arr => {
-      let lengthNewArr = getRandomArbitary(1, arr.length);
-      let newArray = [];
-      for(let i = 0; i < lengthNewArr; i++) {
-        newArray[i] = arr[i];
-      }
-      return newArray;
+      return arr.filter(() => {
+        return Math.random() * 1000 >= 500;
+      })
     };
 
-    let authorAvatarSrc = 'img/avatars/user0';
-    let offerTitle = TITLE_OBJECTS[getRandomNum(TITLE_OBJECTS.length - 1)];
-    let offerLocationX = getRandomArbitary(LOCATION_MIN_X, LOCATION_MAX_X);
-    let offerLocationY = getRandomArbitary(LOCATION_MIN_Y, LOCATION_MAX_Y);
-    let offerLocationCoordinates = offerLocationX + "," + offerLocationY;
-    let offerPrice = getRandomArbitary(MIN_PRICE, MAX_PRICE);
-    let offerType = TYPE_OBJECTS[getRandomNum(TYPE_OBJECTS.length - 1)];
-    let offerRooms = getRandomArbitary(1, MAX_ROOMS);
-    let offerGuests = getRandomNum(MAX_GUESTS);
-    let offerCheckin = CHECKIN_CHECKOUT_TIMES[getRandomNum(CHECKIN_CHECKOUT_TIMES.length - 1)];
-    let offerCheckout = CHECKIN_CHECKOUT_TIMES[getRandomNum(CHECKIN_CHECKOUT_TIMES.length - 1)];
-    let offerFeatures = getRandomArray(FEATURES);
-    let offerDescription = '';
-    let offerPhotos = [];
+    this.getRandomAdsObject = () => {
+      let adsObj = {};
+      let authorAvatarSrc = 'img/avatars/user0';
+      let offerTitle = TITLE_OBJECTS[getRandomInteger(0, TITLE_OBJECTS.length - 1)];
+      let offerLocationX = getRandomInteger(LOCATION_MIN_X, LOCATION_MAX_X);
+      let offerLocationY = getRandomInteger(LOCATION_MIN_Y, LOCATION_MAX_Y);
+      let offerLocationCoordinates = offerLocationX + "," + offerLocationY;
+      let offerPrice = getRandomInteger(MIN_PRICE, MAX_PRICE);
+      let offerType = TYPE_OBJECTS[getRandomInteger(0, TYPE_OBJECTS.length - 1)];
+      let offerRooms = getRandomInteger(1, MAX_ROOMS);
+      let offerGuests = getRandomInteger(0, MAX_GUESTS);
+      let offerCheckin = CHECKIN_CHECKOUT_TIMES[getRandomInteger(0, CHECKIN_CHECKOUT_TIMES.length - 1)];
+      let offerCheckout = CHECKIN_CHECKOUT_TIMES[getRandomInteger(0, CHECKIN_CHECKOUT_TIMES.length - 1)];
+      let offerFeatures = getRandomArray(FEATURES);
+      let offerDescription = '';
+      let offerPhotos = [];
 
-    this.author = {"avatar": authorAvatarSrc};
-    this.offer = {
-      "title": offerTitle,
-      "address": offerLocationCoordinates,
-      "price": offerPrice,
-      "type": offerType,
-      "rooms": offerRooms,
-      "guests": offerGuests,
-      "checkin": offerCheckin,
-      "checkout": offerCheckout,
-      "features": offerFeatures,
-      "description": offerDescription,
-      "photos": offerPhotos
-    };
+      adsObj.author = {"avatar": authorAvatarSrc};
+      adsObj.offer = {
+        "title": offerTitle,
+        "address": offerLocationCoordinates,
+        "price": offerPrice,
+        "type": offerType,
+        "rooms": offerRooms,
+        "guests": offerGuests,
+        "checkin": offerCheckin,
+        "checkout": offerCheckout,
+        "features": offerFeatures,
+        "description": offerDescription,
+        "photos": offerPhotos
+      };
 
-    this.location = {
-      "x": offerLocationX,
-      "y": offerLocationY
+      adsObj.location = {
+        "x": offerLocationX,
+        "y": offerLocationY
+      };
+      return adsObj;
     }
   }
 }
 
-const createAdsArray = function (lengthArray) {
-  let numAvatar = 1;
-  let adsObjects = [];
-  for (let i = 0; i < lengthArray; i++) {
-    adsObjects[i] = new AdsObject();
-    adsObjects[i].author.avatar = adsObjects[i].author.avatar + numAvatar + '.png';
-    numAvatar++;
+class Map {
+
+  constructor() {
+    const OBJECTS_QTY = 8;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const pinMap = document.querySelector('.tokyo__pin-map');
+      const offerDialog= document.querySelector('.dialog');
+      const offerDialogTitle = offerDialog.querySelector('.dialog__title');
+      const offerDialogAvatar = offerDialogTitle.querySelector('img');
+      const dialogPanel = offerDialog.querySelector('.dialog__panel');
+      const templateDialogPanel = document.querySelector('#lodge-template');
+      let fragment = document.createDocumentFragment();
+
+      const mockData = arrLength => {
+        let adsObjects = [];
+
+        for (let i = 0; i < arrLength; i++) {
+          adsObjects[i] = new AdsObject().getRandomAdsObject();
+          adsObjects[i].author.avatar = adsObjects[i].author.avatar + (i + 1) + '.png';
+        }
+
+        return adsObjects;
+      };
+
+      const createTemplateLabelHtml = adsObject => {
+        let newLabelMap = document.createElement('div');
+        newLabelMap.className = 'pin';
+        newLabelMap.style.left = adsObject.location.x + 'px';
+        newLabelMap.style.top = adsObject.location.y + 'px';
+        newLabelMap.innerHTML = `<img src=${adsObject.author.avatar} class="rounded" width="40" height="40">`;
+
+        return newLabelMap;
+      };
+
+      const createLabelsInMap = (adsArray, map) => {
+        for (let i = 0; i < adsArray.length; i++) {
+          fragment.appendChild(createTemplateLabelHtml(adsArray[i]));
+        }
+
+        map.appendChild(fragment);
+      };
+
+      const convertTypeObject = type => {
+        switch (type) {
+          case 'flat':
+            return 'Квартира';
+          case 'bungalo':
+            return 'Бунгало';
+          case 'house':
+            return 'Дом';
+          default:
+            return 'Неизестный тип жилья'
+        }
+      };
+
+      const getFeaturesObjectHtml = object => {
+        let featuresTemplate = '';
+        for(let i = 0; i < object.offer.features.length; i++) {
+          featuresTemplate += `<span class="feature__image feature__image--${object.offer.features[i]}"></span>`;
+        }
+        return featuresTemplate;
+      };
+
+      const renderDialogPanel = (templateDialogContent, offerObject) => {
+        dialogPanel.querySelector('.lodge__title').textContent = offerObject.offer.title;
+        dialogPanel.querySelector('.lodge__address').textContent = offerObject.offer.address;
+        dialogPanel.querySelector('.lodge__price').textContent = offerObject.offer.price + ' \u20bd/ночь';
+        dialogPanel.querySelector('.lodge__type').textContent = convertTypeObject(offerObject.offer.type);
+        dialogPanel.querySelector('.lodge__rooms-and-guests').textContent = `Для ${offerObject.offer.guests} гостей в ${offerObject.offer.rooms} комнатах`;
+        dialogPanel.querySelector('.lodge__checkin-time').textContent = `Заезд после ${offerObject.offer.checkin}, выезд до ${offerObject.offer.checkout}`;
+        dialogPanel.querySelector('.lodge__features').innerHTML = getFeaturesObjectHtml(offerObject);
+        dialogPanel.querySelector('.lodge__description').textContent = offerObject.offer.description;
+        offerDialogAvatar.setAttribute('src', offerObject.author.avatar);
+
+        return dialogPanel;
+      };
+
+      const createDialogPanel = (dialogParent, dialogPanel, newDialogPanel) => {
+        dialogParent.replaceChild(newDialogPanel, dialogPanel);
+      };
+
+      const mapInit = () => {
+        const adsData = mockData(OBJECTS_QTY);
+
+        createLabelsInMap(adsData, pinMap);
+        createDialogPanel(offerDialog, dialogPanel, renderDialogPanel(templateDialogPanel.content, adsData[0]));
+      };
+
+      mapInit();
+    })
   }
+}
 
-  return adsObjects;
-};
-
-adsArray = createAdsArray(OBJECTS_QTY);
-
-const createTemplateLabelHtml = function (adsObject) {
-  let newLabelMap = document.createElement('div');
-  newLabelMap.className = 'pin';
-  newLabelMap.style.left = adsObject.location.x + 'px';
-  newLabelMap.style.top = adsObject.location.y + 'px';
-  newLabelMap.innerHTML = '<img src="' + adsObject.author.avatar + '" class="rounded" width="40" height="40">';
-
-  return newLabelMap;
-};
-
-const createLabelsInMap = function (adsArray, map) {
-  for (let i = 0; i < adsArray.length; i++) {
-    fragment.appendChild(createTemplateLabelHtml(adsArray[i]));
-  }
-
-  map.appendChild(fragment);
-};
-
-createLabelsInMap(adsArray, PIN_MAP);
-
-const renderDialogPanel = function (templateDialogContent, offerObject) {
-  let dialogPanel = templateDialogContent.cloneNode(true);
-  let typeObjectRu = type => {
-    switch (type) {
-      case 'flat':
-        return 'Квартира';
-      case 'bungalo':
-        return 'Бунгало';
-      case 'house':
-        return 'Дом';
-      default:
-        return 'Неизестный тип жилья'
-    }
-  };
-
-  let getFeaturesObjectHtml = object => {
-    let featuresTemplate = '';
-    for(let i = 0; i < object.offer.features.length; i++) {
-      featuresTemplate += '<span class="feature__image feature__image--'
-        + object.offer.features[i] + '"></span>';
-    }
-    return featuresTemplate;
-  };
-
-  dialogPanel.querySelector('.lodge__title').textContent = offerObject.offer.title;
-  dialogPanel.querySelector('.lodge__address').textContent = offerObject.offer.address;
-  dialogPanel.querySelector('.lodge__price').textContent = offerObject.offer.price + ' \u20bd/ночь';
-  dialogPanel.querySelector('.lodge__type').textContent = typeObjectRu(offerObject.offer.type);
-  dialogPanel.querySelector('.lodge__rooms-and-guests').textContent = 'Для ' + offerObject.offer.guests
-    + ' гостей в ' + offerObject.offer.rooms + ' комнатах';
-  dialogPanel.querySelector('.lodge__checkin-time').textContent = 'Заезд после ' + offerObject.offer.checkin
-    + ', выезд до ' + offerObject.offer.checkout;
-  dialogPanel.querySelector('.lodge__features').innerHTML = getFeaturesObjectHtml(offerObject);
-  dialogPanel.querySelector('.lodge__description').textContent = offerObject.offer.description;
-  OFFER_DIALOG_AVATAR.setAttribute('src', offerObject.author.avatar);
-
-  return dialogPanel;
-};
-
-const createDialogPanel = function (dialogParent, dialogPanel, newDialogPanel) {
-  dialogParent.replaceChild(newDialogPanel, dialogPanel);
-};
-
-createDialogPanel(OFFER_DIALOG, DIALOG_PANEL, renderDialogPanel(TEMPLATE_DIALOG_PANEL_CONTENT, adsArray[0]));
-
-
+new Map();
