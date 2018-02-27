@@ -84,6 +84,16 @@ class Map {
       const templateDialogPanel = document.querySelector('#lodge-template');
       let fragment = document.createDocumentFragment();
 
+      const getSiblings = elem => {
+        let siblings = [];
+        let sibling = elem.parentNode.firstChild;
+        for(; sibling; sibling = sibling.nextSibling) {
+          if(sibling.nodeType !==1 || sibling === elem) continue;
+          siblings.push(sibling);
+        }
+        return siblings;
+      };
+
       const mockData = arrLength => {
         let adsObjects = [];
 
@@ -153,13 +163,14 @@ class Map {
       };
 
       const createHandlersEvents = (adsData) => {
-        const pin = document.querySelectorAll('.pin:not(.pin__main)');
+        const pinAll = document.querySelectorAll('.pin:not(.pin__main)');
+        const pin = document.querySelector('.pin');
         const btnCloseDialog = document.querySelector('.dialog__close');
         const dialog = document.querySelector('#offer-dialog');
 
         let onBtnCloseDialogClick = (e)=> {
-          for (let i = 0; i < pin.length; i++) {
-            pin[i].classList.remove('pin--active');
+          for (let i = 0; i < pinAll.length; i++) {
+            pinAll[i].classList.remove('pin--active');
           }
 
           dialog.classList.add('hidden');
@@ -169,10 +180,8 @@ class Map {
           dialog.classList.remove('hidden');
         };
 
-        const onPinMapClick = (pin, evt, index) => {
-          let siblingsPin = Array.prototype.filter.call(pin[index].parentNode.children, (child) => {
-            return child !== pin[index];
-          });
+        const onPinMapClick = (pinAll, pin, evt, index) => {
+          let siblingsPin = getSiblings(evt.currentTarget);
 
           for (let i = 0; i < siblingsPin.length; i++) {
             siblingsPin[i].classList.remove('pin--active');
@@ -187,9 +196,9 @@ class Map {
 
         };
 
-        for (let i = 0; i < pin.length; i++) {
-          pin[i].addEventListener('click', (e) => {
-            onPinMapClick(pin, e, i);
+        for (let i = 0; i < pinAll.length; i++) {
+          pinAll[i].addEventListener('click', (e) => {
+            onPinMapClick(pinAll, pin, e, i);
           })
         }
       };
