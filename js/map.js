@@ -190,7 +190,7 @@ class Map {
 
           dialog.classList.add('hidden');
 
-          document.removeEventListener('keydown', onEscPress);
+
           btnCloseDialog.removeEventListener('keydown', onBtnCloseDialogPress);
           btnCloseDialog.removeEventListener('click', closeDialog);
         };
