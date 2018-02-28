@@ -190,7 +190,6 @@ class Map {
 
           dialog.classList.add('hidden');
 
-
           btnCloseDialog.removeEventListener('keydown', onBtnCloseDialogPress);
           btnCloseDialog.removeEventListener('click', closeDialog);
         };
@@ -203,7 +202,7 @@ class Map {
           btnCloseDialog.addEventListener('click', closeDialog);
         };
 
-        const activePin = (pinAll, pin, evt, index) => {
+        const onPinMapClick = (pinAll, pin, evt, index) => {
           let siblingsPin = getSiblings(evt.currentTarget);
 
           for (let i = 0; i < siblingsPin.length; i++) {
