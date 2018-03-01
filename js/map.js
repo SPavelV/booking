@@ -202,7 +202,7 @@ class Map {
           btnCloseDialog.addEventListener('click', closeDialog);
         };
 
-        const onPinMapClick = (pinAll, pin, evt, index) => {
+        const activePin = (pinAll, pin, evt, index) => {
           let siblingsPin = getSiblings(evt.currentTarget);
 
           for (let i = 0; i < siblingsPin.length; i++) {
@@ -226,6 +226,8 @@ class Map {
             }
           });
         }
+
+        openDialogPanel();
       };
 
       const mapInit = () => {
