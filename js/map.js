@@ -87,8 +87,8 @@ class Map {
       const getSiblings = elem => {
         let siblings = [];
         let sibling = elem.parentNode.firstChild;
-        for(; sibling; sibling = sibling.nextSibling) {
-          if(sibling.nodeType !==1 || sibling === elem) continue;
+        for (; sibling; sibling = sibling.nextSibling) {
+          if (sibling.nodeType !== 1 || sibling === elem) continue;
           siblings.push(sibling);
         }
         return siblings;
@@ -108,7 +108,7 @@ class Map {
       const createTemplateLabelHtml = adsObject => {
         let newLabelMap = document.createElement('div');
         newLabelMap.className = 'pin';
-        newLabelMap.setAttribute('tabindex', 0) ;
+        newLabelMap.setAttribute('tabindex', 0);
         newLabelMap.style.left = adsObject.location.x + 'px';
         newLabelMap.style.top = adsObject.location.y + 'px';
         newLabelMap.innerHTML = `<img src=${adsObject.author.avatar} class="rounded" width="40" height="40">`;
@@ -164,26 +164,26 @@ class Map {
       };
 
       const createHandlersEvents = (adsData) => {
-        const ESC_KEYCODE = 27 ;
+        const ESC_KEYCODE = 27;
         const ENTER_KEYCODE = 13;
         const pinAll = document.querySelectorAll('.pin:not(.pin__main)');
         const pin = document.querySelector('.pin');
         const btnCloseDialog = document.querySelector('.dialog__close');
         const dialog = document.querySelector('#offer-dialog');
 
-        let onEscPress = (evt) => {
-          if(evt.keyCode === ESC_KEYCODE) {
+        const onEscPress = (evt) => {
+          if (evt.keyCode === ESC_KEYCODE) {
             closeDialog(evt);
           }
         };
 
-        let onBtnCloseDialogPress = (evt) => {
-          if(evt.keyCode === ENTER_KEYCODE) {
-            closeDialog = (evt);
+        const onBtnCloseDialogPress = (evt) => {
+          if (evt.keyCode === ENTER_KEYCODE) {
+            closeDialog(evt);
           }
         };
 
-        let closeDialog = (e) => {
+        const closeDialog = (e) => {
           for (let i = 0; i < pinAll.length; i++) {
             pinAll[i].classList.remove('pin--active');
           }
@@ -194,7 +194,7 @@ class Map {
           btnCloseDialog.removeEventListener('click', closeDialog);
         };
 
-        let openDialogPanel = () => {
+        const openDialogPanel = () => {
           dialog.classList.remove('hidden');
 
           document.addEventListener('keydown', onEscPress);
@@ -221,7 +221,7 @@ class Map {
           });
 
           pinAll[i].addEventListener('keydown', (evt) => {
-            if(evt.keyCode === ENTER_KEYCODE) {
+            if (evt.keyCode === ENTER_KEYCODE) {
               activePin(pinAll, pin, evt, i);
             }
           });
@@ -241,6 +241,12 @@ class Map {
       mapInit();
 
     })
+  }
+}
+
+class ValidationForm {
+  constructor() {
+    const form = document.forms[0];
   }
 }
 
