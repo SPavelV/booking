@@ -75,6 +75,36 @@ class Map {
   constructor() {
     const OBJECTS_QTY = 8;
 
+    const getSiblings = elem => {
+      let siblings = [];
+      let sibling = elem.parentNode.firstChild;
+      for (; sibling; sibling = sibling.nextSibling) {
+        if (sibling.nodeType !== 1 || sibling === elem) continue;
+        siblings.push(sibling);
+      }
+      return siblings;
+    };
+    const mockData = arrLength => {
+      let adsObjects = [];
+
+      for (let i = 0; i < arrLength; i++) {
+        adsObjects[i] = new AdsObject().getRandomAdsObject();
+        adsObjects[i].author.avatar = adsObjects[i].author.avatar + (i + 1) + '.png';
+      }
+
+      return adsObjects;
+    };
+    const createTemplateLabelHtml = adsObject => {
+      let newLabelMap = document.createElement('div');
+      newLabelMap.className = 'pin';
+      newLabelMap.setAttribute('tabindex', 0);
+      newLabelMap.style.left = adsObject.location.x + 'px';
+      newLabelMap.style.top = adsObject.location.y + 'px';
+      newLabelMap.innerHTML = `<img src=${adsObject.author.avatar} class="rounded" width="40" height="40">`;
+
+      return newLabelMap;
+    };
+
     document.addEventListener('DOMContentLoaded', () => {
       const pinMap = document.querySelector('.tokyo__pin-map');
       const offerDialog = document.querySelector('.dialog');
@@ -84,39 +114,8 @@ class Map {
       const templateDialogPanel = document.querySelector('#lodge-template');
       let fragment = document.createDocumentFragment();
 
-      const getSiblings = elem => {
-        let siblings = [];
-        let sibling = elem.parentNode.firstChild;
-        for (; sibling; sibling = sibling.nextSibling) {
-          if (sibling.nodeType !== 1 || sibling === elem) continue;
-          siblings.push(sibling);
-        }
-        return siblings;
-      };
-
-      const mockData = arrLength => {
-        let adsObjects = [];
-
-        for (let i = 0; i < arrLength; i++) {
-          adsObjects[i] = new AdsObject().getRandomAdsObject();
-          adsObjects[i].author.avatar = adsObjects[i].author.avatar + (i + 1) + '.png';
-        }
-
-        return adsObjects;
-      };
-
-      const createTemplateLabelHtml = adsObject => {
-        let newLabelMap = document.createElement('div');
-        newLabelMap.className = 'pin';
-        newLabelMap.setAttribute('tabindex', 0);
-        newLabelMap.style.left = adsObject.location.x + 'px';
-        newLabelMap.style.top = adsObject.location.y + 'px';
-        newLabelMap.innerHTML = `<img src=${adsObject.author.avatar} class="rounded" width="40" height="40">`;
-
-        return newLabelMap;
-      };
-
       const createLabelsInMap = (adsArray, map) => {
+        if(!map) return;
         for (let i = 0; i < adsArray.length; i++) {
           fragment.appendChild(createTemplateLabelHtml(adsArray[i]));
         }
@@ -142,6 +141,7 @@ class Map {
         for (let i = 0; i < object.offer.features.length; i++) {
           featuresTemplate += `<span class="feature__image feature__image--${object.offer.features[i]}"></span>`;
         }
+
         return featuresTemplate;
       };
 
@@ -160,16 +160,19 @@ class Map {
       };
 
       const createDialogPanel = (dialogParent, dialogPanel, newDialogPanel) => {
+        if(!dialogParent && !dialogPanel && !newDialogPanel) return;
         dialogParent.replaceChild(newDialogPanel, dialogPanel);
       };
 
       const createHandlersEvents = (adsData) => {
         const ESC_KEYCODE = 27;
         const ENTER_KEYCODE = 13;
-        const pinAll = document.querySelectorAll('.pin:not(.pin__main)');
+        let pinAll = document.querySelectorAll('.pin:not(.pin__main)');
         const pin = document.querySelector('.pin');
         const btnCloseDialog = document.querySelector('.dialog__close');
         const dialog = document.querySelector('#offer-dialog');
+
+        pinAll = Array.prototype.slice.call(pinAll);
 
         const onEscPress = (evt) => {
           if (evt.keyCode === ESC_KEYCODE) {
@@ -183,10 +186,10 @@ class Map {
           }
         };
 
-        const closeDialog = (e) => {
-          for (let i = 0; i < pinAll.length; i++) {
-            pinAll[i].classList.remove('pin--active');
-          }
+        const closeDialog = () => {
+          if(!dialog && !pinAll && !btnCloseDialog) return;
+
+          pinAll.forEach(item => item.classList.remove('pin--active'));
 
           dialog.classList.add('hidden');
 
@@ -195,6 +198,7 @@ class Map {
         };
 
         const openDialogPanel = () => {
+          if(!dialog && !btnCloseDialog) return;
           dialog.classList.remove('hidden');
 
           document.addEventListener('keydown', onEscPress);
@@ -203,11 +207,10 @@ class Map {
         };
 
         const activePin = (pinAll, pin, evt, index) => {
+          if(!pinAll && !pin) return;
           let siblingsPin = getSiblings(evt.currentTarget);
 
-          for (let i = 0; i < siblingsPin.length; i++) {
-            siblingsPin[i].classList.remove('pin--active');
-          }
+          siblingsPin.forEach(item => item.classList.remove('pin--active'));
 
           evt.currentTarget.classList.add('pin--active');
           createDialogPanel(dialog, dialogPanel, renderDialogPanel(templateDialogPanel.content, adsData[index]));
@@ -215,17 +218,17 @@ class Map {
           openDialogPanel();
         };
 
-        for (let i = 0; i < pinAll.length; i++) {
-          pinAll[i].addEventListener('click', (evt) => {
+        pinAll.map((item, i) => {
+          item.addEventListener('click', (evt) => {
             activePin(pinAll, pin, evt, i);
           });
 
-          pinAll[i].addEventListener('keydown', (evt) => {
+          item.addEventListener('keydown', (evt) => {
             if (evt.keyCode === ENTER_KEYCODE) {
               activePin(pinAll, pin, evt, i);
             }
           });
-        }
+        });
 
         openDialogPanel();
       };
