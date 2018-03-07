@@ -262,27 +262,34 @@ class ValidationForm {
         let select = evt.target;
         let selectedOptionIndex;
 
-        for(let i = 0; i < select.options.length; i++ ) {
-          if(select.options[i].selected) {
+
+        [...select.options].forEach( (item, i) => {
+          if(item.selected) {
             selectedOptionIndex = i;
           }
-        }
+        });
 
-        if(select.name === 'timein') {
-          timeOut.selectIndex = selectedOptionIndex;
-          console.log('timeOut.selectIndex: ' + selectedOptionIndex)
-        } else if (select.name === 'timeout') {
-          timeIn.selectIndex = selectedOptionIndex;
-          console.log('timeIn.selectIndex: ' + selectedOptionIndex)
-        } else {
-          console.log('Wtf?');
-        }
+        // for(let i = 0; i < select.options.length; i++ ) {
+        //   if(select.options[i].selected) {
+        //     selectedOptionIndex = i;
+        //   }
+        // }
 
-        // select.options.forEach( (item, i) => {
+
+        // Array.prototype.slice.call(select.options).forEach( (item, i) => {
         //   if(item.selected) {
         //     selectedOptionIndex = i;
         //   }
         // });
+
+        if(select.name === 'timein') {
+          timeOut.selectedIndex = selectedOptionIndex;
+        } else if (select.name === 'timeout') {
+          timeIn.selectedIndex = selectedOptionIndex;
+        } else {
+          console.log('Wtf?');
+        }
+
         console.log('selectedOptionIndex: ' + selectedOptionIndex);
       };
 
