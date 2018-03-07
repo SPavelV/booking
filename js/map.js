@@ -239,6 +239,7 @@ class Map {
         createLabelsInMap(adsData, pinMap);
         createDialogPanel(offerDialog, dialogPanel, renderDialogPanel(templateDialogPanel.content, adsData[0]));
         createHandlersEvents(adsData);
+
       };
 
       mapInit();
@@ -248,9 +249,50 @@ class Map {
 }
 
 class ValidationForm {
+
   constructor() {
-    const form = document.forms[0];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.querySelector('.notice__form');
+      const timeIn = form.elements.timein;
+      const timeOut = form.elements.timeout;
+
+      const onSelectChange = evt => {
+        if(!timeIn && !timeOut) return;
+        let select = evt.target;
+        let selectedOptionIndex;
+
+        for(let i = 0; i < select.options.length; i++ ) {
+          if(select.options[i].selected) {
+            selectedOptionIndex = i;
+          }
+        }
+
+        if(select.name === 'timein') {
+          timeOut.selectIndex = selectedOptionIndex;
+          console.log('timeOut.selectIndex: ' + selectedOptionIndex)
+        } else if (select.name === 'timeout') {
+          timeIn.selectIndex = selectedOptionIndex;
+          console.log('timeIn.selectIndex: ' + selectedOptionIndex)
+        } else {
+          console.log('Wtf?');
+        }
+
+        // select.options.forEach( (item, i) => {
+        //   if(item.selected) {
+        //     selectedOptionIndex = i;
+        //   }
+        // });
+        console.log('selectedOptionIndex: ' + selectedOptionIndex);
+      };
+
+      timeIn.addEventListener('change', onSelectChange);
+      timeOut.addEventListener('change',onSelectChange);
+
+    });
+
   }
 }
 
 new Map();
+new ValidationForm();
