@@ -256,15 +256,17 @@ class ValidationForm {
       const form = document.querySelector('.notice__form');
       const timeIn = form.elements.timein;
       const timeOut = form.elements.timeout;
+      const typeLodging = form.elements.type;
+      const priceNight = form.elements.price;
 
-      const onSelectChange = evt => {
+      const onSelectChangeTime = evt => {
         if(!timeIn && !timeOut) return;
         let select = evt.target;
         let selectedOptionIndex;
 
 
-        [...select.options].forEach( (item, i) => {
-          if(item.selected) {
+        [...select.options].forEach( (option, i) => {
+          if(option.selected) {
             selectedOptionIndex = i;
           }
         });
@@ -293,8 +295,64 @@ class ValidationForm {
         console.log('selectedOptionIndex: ' + selectedOptionIndex);
       };
 
-      timeIn.addEventListener('change', onSelectChange);
-      timeOut.addEventListener('change',onSelectChange);
+      const onChangeTypePrice = evt => {
+        if(!typeLodging && !priceNight) return;
+        const theTarget = evt.target;
+        let optionTextTypeLodging;
+        let priceNightValue;
+
+        if(theTarget === typeLodging) {
+
+          [...theTarget.options].forEach((option, i) => {
+            if(option.selected) {
+              optionTextTypeLodging = option.text;
+            }
+          });
+
+          switch(optionTextTypeLodging) {
+            case 'Лачуга':
+              priceNightValue = 0;
+              break;
+            case 'Квартира':
+              priceNightValue = 1000;
+              break;
+            case 'Дом':
+              priceNightValue = 5000;
+              break;
+            case 'Дворец':
+              priceNightValue = 10000;
+              break;
+            default:
+              priceNightValue = 0.1;
+          }
+
+          priceNight.value = priceNightValue;
+        }
+
+        if(theTarget === priceNight) {
+          priceNightValue = theTarget.value;
+
+          switch(priceNightValue) {
+            case '0':
+              typeLodging.value = 'bungalo';
+              break;
+            case '1000':
+              typeLodging.value = 'flat';
+              break;
+            case '5000':
+              typeLodging.value = 'house';
+              break;
+            case '10000':
+              typeLodging.value = 'palace';
+              break;
+          }
+        }
+      };
+
+      timeIn.addEventListener('change', onSelectChangeTime);
+      timeOut.addEventListener('change',onSelectChangeTime);
+      typeLodging.addEventListener('change', onChangeTypePrice);
+      priceNight.addEventListener('input', onChangeTypePrice);
 
     });
 
