@@ -258,31 +258,19 @@ class ValidationForm {
       const timeOut = form.elements.timeout;
       const typeLodging = form.elements.type;
       const priceNight = form.elements.price;
+      const qtyRooms = form.elements.rooms;
+      const qtySeats = form.elements.capacity;
 
       const onSelectChangeTime = evt => {
         if(!timeIn && !timeOut) return;
         let select = evt.target;
         let selectedOptionIndex;
 
-
         [...select.options].forEach( (option, i) => {
           if(option.selected) {
             selectedOptionIndex = i;
           }
         });
-
-        // for(let i = 0; i < select.options.length; i++ ) {
-        //   if(select.options[i].selected) {
-        //     selectedOptionIndex = i;
-        //   }
-        // }
-
-
-        // Array.prototype.slice.call(select.options).forEach( (item, i) => {
-        //   if(item.selected) {
-        //     selectedOptionIndex = i;
-        //   }
-        // });
 
         if(select.name === 'timein') {
           timeOut.selectedIndex = selectedOptionIndex;
@@ -291,11 +279,8 @@ class ValidationForm {
         } else {
           console.log('Wtf?');
         }
-
-        console.log('selectedOptionIndex: ' + selectedOptionIndex);
       };
-
-      const onChangeTypePrice = evt => {
+      const onChangeTypeLodgingPrice = evt => {
         if(!typeLodging && !priceNight) return;
         const theTarget = evt.target;
         let optionTextTypeLodging;
@@ -330,29 +315,60 @@ class ValidationForm {
         }
 
         if(theTarget === priceNight) {
-          priceNightValue = theTarget.value;
+          priceNightValue = parseInt(theTarget.value);
 
-          switch(priceNightValue) {
-            case '0':
-              typeLodging.value = 'bungalo';
-              break;
-            case '1000':
-              typeLodging.value = 'flat';
-              break;
-            case '5000':
-              typeLodging.value = 'house';
-              break;
-            case '10000':
-              typeLodging.value = 'palace';
-              break;
+          if(priceNightValue >= 0 && priceNightValue < 1000) {
+            typeLodging.value = 'bungalo';
+          } else if (priceNightValue >= 1000 && priceNightValue < 5000) {
+            typeLodging.value = 'flat';
+          } else if (priceNightValue >= 5000 && priceNightValue < 10000) {
+            typeLodging.value = 'house';
+          } else if (priceNightValue >= 10000) {
+            typeLodging.value = 'palace';
           }
         }
       };
+      const onSelectRoomsQtySeats = evt => {
+        if(!qtyRooms && !qtySeats) return;
+        let select = evt.target;
+        let selectedOptionValue;
+
+        [...select.options].forEach( option => {
+          if(option.selected) {
+            selectedOptionValue = option.value;
+          }
+        });
+
+        if(select.name === 'rooms') {
+          if(selectedOptionValue === '100') {
+            qtySeats.value = '0';
+          } else {
+            qtySeats.value = selectedOptionValue;
+          }
+        } else if (select.name === 'capacity') {
+          if(selectedOptionValue === '0') {
+            qtyRooms.value = '100';
+          } else {
+            qtyRooms.value = selectedOptionValue;
+          }
+        } else {
+          console.log('Wtf?')
+        }
+      };
+      const onBtnSubmitClick = evt => {
+
+      };
+
 
       timeIn.addEventListener('change', onSelectChangeTime);
       timeOut.addEventListener('change',onSelectChangeTime);
-      typeLodging.addEventListener('change', onChangeTypePrice);
-      priceNight.addEventListener('input', onChangeTypePrice);
+
+      typeLodging.addEventListener('change', onChangeTypeLodgingPrice);
+      priceNight.addEventListener('input', onChangeTypeLodgingPrice);
+
+      qtyRooms.addEventListener('change', onSelectRoomsQtySeats);
+      qtySeats.addEventListener('change', onSelectRoomsQtySeats);
+
 
     });
 
