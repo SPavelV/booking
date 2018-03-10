@@ -260,6 +260,7 @@ class ValidationForm {
       const priceNight = form.elements.price;
       const qtyRooms = form.elements.rooms;
       const qtySeats = form.elements.capacity;
+      const submitBtn = form.querySelector('.form__submit');
 
       const onSelectChangeTime = evt => {
         if(!timeIn && !timeOut) return;
@@ -356,9 +357,14 @@ class ValidationForm {
         }
       };
       const onBtnSubmitClick = evt => {
-
+        [...form.elements].forEach( (input, i) => {
+          if(input.checkValidity() === false) {
+            input.classList.add('invalid-input');
+          } else {
+            input.classList.remove('invalid-input');
+          }
+        });
       };
-
 
       timeIn.addEventListener('change', onSelectChangeTime);
       timeOut.addEventListener('change',onSelectChangeTime);
@@ -369,7 +375,7 @@ class ValidationForm {
       qtyRooms.addEventListener('change', onSelectRoomsQtySeats);
       qtySeats.addEventListener('change', onSelectRoomsQtySeats);
 
-
+      submitBtn.addEventListener('click', onBtnSubmitClick);
     });
 
   }
