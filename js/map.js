@@ -262,69 +262,44 @@ class ValidationForm {
       const qtySeats = form.elements.capacity;
       const submitBtn = form.querySelector('.form__submit');
 
-      const onSelectChangeTime = evt => {
-        if(!timeIn && !timeOut) return;
-        let select = evt.target;
-        let selectedOptionIndex;
-
-        [...select.options].forEach( (option, i) => {
-          if(option.selected) {
-            selectedOptionIndex = i;
-          }
-        });
-
-        if(select.name === 'timein') {
-          timeOut.selectedIndex = selectedOptionIndex;
-        } else if (select.name === 'timeout') {
-          timeIn.selectedIndex = selectedOptionIndex;
-        } else {
-          console.log('Wtf?');
-        }
-      };
       const onChangeTypeLodgingPrice = evt => {
         if(!typeLodging && !priceNight) return;
         const theTarget = evt.target;
-        let optionTextTypeLodging;
-        let priceNightValue;
 
         if(theTarget === typeLodging) {
 
           [...theTarget.options].forEach((option, i) => {
             if(option.selected) {
-              optionTextTypeLodging = option.text;
+              switch(option.text) {
+                case 'Лачуга':
+                  priceNight.value = 0;
+                  break;
+                case 'Квартира':
+                  priceNight.value = 1000;
+                  break;
+                case 'Дом':
+                  priceNight.value = 5000;
+                  break;
+                case 'Дворец':
+                  priceNight.value = 10000;
+                  break;
+                default:
+                  priceNight.value = 0.1;
+              }
             }
           });
-
-          switch(optionTextTypeLodging) {
-            case 'Лачуга':
-              priceNightValue = 0;
-              break;
-            case 'Квартира':
-              priceNightValue = 1000;
-              break;
-            case 'Дом':
-              priceNightValue = 5000;
-              break;
-            case 'Дворец':
-              priceNightValue = 10000;
-              break;
-            default:
-              priceNightValue = 0.1;
-          }
-
-          priceNight.value = priceNightValue;
         }
 
         if(theTarget === priceNight) {
-          priceNightValue = parseInt(theTarget.value);
+          priceNight.value = parseInt(theTarget.value);
 
-          if(priceNightValue >= 0 && priceNightValue < 1000) {
+          if(priceNight.value >= 0 && priceNight.value < 1000) {
             typeLodging.value = 'bungalo';
-          } else if (priceNightValue >= 1000 && priceNightValue < 5000) {
+          } else if (priceNight.value >= 1000 && priceNight.value < 5000) {
             typeLodging.value = 'flat';
-          } else if (priceNightValue >= 5000 && priceNightValue < 10000) {
+          } else if (priceNight.value >= 5000 && priceNight.value < 10000) {
             typeLodging.value = 'house';
-          } else if (priceNightValue >= 10000) {
+          } else if (priceNight.value >= 10000) {
             typeLodging.value = 'palace';
           }
         }
@@ -366,8 +341,17 @@ class ValidationForm {
         });
       };
 
-      timeIn.addEventListener('change', onSelectChangeTime);
-      timeOut.addEventListener('change',onSelectChangeTime);
+      if(timeIn) {
+        timeIn.addEventListener('change', () => {
+          timeOut.selectedIndex = timeIn.selectedIndex;
+        });
+      }
+
+      if(timeOut) {
+        timeOut.addEventListener('change', () => {
+          timeIn.selectedIndex = timeOut.selectedIndex;
+        });
+      }
 
       typeLodging.addEventListener('change', onChangeTypeLodgingPrice);
       priceNight.addEventListener('input', onChangeTypeLodgingPrice);
